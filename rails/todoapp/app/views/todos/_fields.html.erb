@@ -1,0 +1,7 @@
+<div class="todo--fields">
+  <%= hidden_field_tag 'todo_list[todos_attributes][][id]', todo.id, id: nil %>
+  <%= text_field_tag 'todo_list[todos_attributes][][name]', todo.name, id: nil %>
+  <button type="button" class="todos--moreless <%= isLast ? "todos--add" : "todos--rm" %>">
+    <%= isLast ? "+" : "-" %>
+  </button>
+</div>

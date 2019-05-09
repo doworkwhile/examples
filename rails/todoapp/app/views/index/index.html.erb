@@ -1,0 +1,47 @@
+<div>
+  <% if flash[:notice] %>
+    <h4>Notice</h4>
+    <%= flash[:notice] %>
+  <% end %>
+  <% if flash[:alert] %>
+    <h4>Alert</h4>
+    <%= flash[:alert] %>
+  <% end %>
+  <% if flash[:notice] || flash[:alert] %><hr><% end %>
+</div>
+<h3>New TodoList</h3>
+<%= form_for @new_todo_list do |f| %>
+  <%= f.text_field :name %>
+  <br>
+  Todos:<br>
+  <% @new_todo_list.todos.each do |t| %>
+    <%= render partial: 'todos/fields', locals: { isLast: true, todo: t } %>
+  <% end %>
+  <br>
+  <%= f.submit 'Create' %>
+<% end %>
+
+<h3>Existing Lists</h3>
+<% @todo_lists.each do |tl| %>
+  <div>
+    <%= form_for tl, method: :patch do |f| %>
+      <%= f.text_field :name %>
+      <br>
+      Todos:<br>
+      <% tl.todos.each_with_index do |t, i| %>
+        <% isLast = (i+1 == tl.todos.size) %>
+        <%= render partial: 'todos/fields', locals: {
+          isLast: isLast,
+          todo: t
+        } %>
+      <% end %>
+      <br>
+      <%= f.submit 'Update' %>
+      <%= f.submit 'Destroy' %>
+    <% end %>
+  </div>
+<% end %>
+
+<script type="text/javascript">
+  onready(TodoListController.bind);
+</script>
