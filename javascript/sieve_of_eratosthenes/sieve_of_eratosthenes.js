@@ -31,7 +31,7 @@ var sieve = function (n) {
 
   
   return list
-    // each index of the array is represent index+2
+    // each index of the array represents the digit index+2
     .map( (e,i) => !!e ? i+2 : false )
 
     // filter the indexes marked false
