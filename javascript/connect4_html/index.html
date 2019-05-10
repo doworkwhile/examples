@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Connect 4</title>
+  <style type="text/css">
+    table.connect4 td {
+      width: 100px;
+      height: 100px;
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+
+<h3>
+  <span class="connect4--turn"></span>
+</h3>
+<table class="connect4">
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  var Connect4 = (function () {
+
+    var board;
+    var cells;
+    var turnIndicator;
+    var turnText = 'Turn: ';
+    var winText = 'Winner: ';
+
+    var rowWidth = 7;
+    var colHeight = 6;
+    var cellsCount = rowWidth * colHeight;
+
+    var turn = 1;
+    var turnCount = 0;
+    var win = false;
+
+    function checkWinHorizontal(color) {
+      // first move by column, then row
+      // from bottom-left to top-right
+      for (var i = colHeight - 1; i >= 0; i--) { // i = row
+        for (var j = 0; j < 4; j++) { // j = column, l->r max is 3
+          var first = (i * rowWidth) + j; // left-most cell
+          if (
+            isSetAs( cells[first], color ) &&
+            isSetAs( cells[first + 1], color ) &&
+            isSetAs( cells[first + 2], color ) &&
+            isSetAs( cells[first + 3], color )
+          ) {
+            setCellsAsWin(
+              cells[first],
+              cells[first + 1],
+              cells[first + 2],
+              cells[first + 3]
+            )
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    function checkWinVertical(color) {
+      // first move by column, then row
+      // from bottom-left to top-right
+      for (var i = colHeight - 1; i >= 3; i--) { // i = row, last row is 3
+        for (var j = 0; j < rowWidth; j++) { // j = column
+          var first = (i * rowWidth) + j; // bottom-most cell
+          console.log(first);
+          if (
+            isSetAs( cells[first], color ) &&
+            isSetAs( cells[first - 7], color ) &&
+            isSetAs( cells[first - 14], color ) &&
+            isSetAs( cells[first - 21], color )
+          ) {
+            setCellsAsWin(
+              cells[first],
+              cells[first - 7],
+              cells[first - 14],
+              cells[first - 21]
+            )
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    function checkWinDiagonalTopLeftToBottomRight(color) {
+      // first move by column, then row
+      // from bottom-left to top-right
+      for (var i = 2; i >= 0; i--) { // move column (t max is index 2)
+        for (var j = 0; j < 4; j++) { // move row (l max is index 3)
+          var first = (i * rowWidth) + j;
+          if (
+            isSetAs( cells[first], color ) &&
+            isSetAs( cells[first + 7 + 1], color ) &&
+            isSetAs( cells[first + 14 + 2], color ) &&
+            isSetAs( cells[first + 21 + 3], color )
+          ) {
+            setCellsAsWin(
+              cells[first],
+              cells[first + 7 + 1],
+              cells[first + 14 + 2],
+              cells[first + 21 + 3]
+            )
+            return true;
+          }
+        }
+      }
+    }
+
+    function checkWinDiagonalTopRightToBottomLeft(color) {
+      // first move by column, then row
+      // from bottom-left to top-right
+      for (var i = 2; i >= 0; i--) { // move column (t max is index 2)
+        for (var j = 3; j < rowWidth; j++) { // move row (l max is index 3)
+          var first = (i * rowWidth) + j;
+          if (
+            isSetAs( cells[first], color ) &&
+            isSetAs( cells[first + 7 - 1], color ) &&
+            isSetAs( cells[first + 14 - 2], color ) &&
+            isSetAs( cells[first + 21 - 3], color )
+          ) {
+            setCellsAsWin(
+              cells[first],
+              cells[first + 7 - 1],
+              cells[first + 14 - 2],
+              cells[first + 21 - 3]
+            )
+            return true;
+          }
+        }
+      }
+    }
+
+    function setCellsAsWin() {
+      for (var i = 0; i < arguments.length; i++) {
+        arguments[i].style.border = "10px solid black";
+      }
+    }
+
+    function checkWin(color) {
+      return (
+        checkWinHorizontal(color) ||
+        checkWinVertical(color) ||
+        checkWinDiagonalTopLeftToBottomRight(color) ||
+        checkWinDiagonalTopRightToBottomLeft(color)
+      );
+    }
+
+    function alreadySet(cell) {
+      return cell.style.backgroundColor !== '';
+    }
+
+    function isSetAs(cell, color) {
+      return cell.style.backgroundColor === color;
+    }
+
+    function turnColor() {
+      return turn ? 'blue' : 'red';
+    }
+
+    function cellClick(e) {
+      // no more turns
+      if (win || turnCount == cellsCount) return;
+
+      var cell = e.target;
+      if (alreadySet(cell)) return; // the last cell in the row has been set
+      
+      // start with the index of the clicked cell and increment (move down)
+      // until the last unset cell
+      var insertIndex = e.target.index;
+      while (
+        insertIndex + rowWidth < cellsCount && // possible to move down?
+        !alreadySet(cells[insertIndex + rowWidth]) // next cell is not set?
+      ) {
+        insertIndex += rowWidth;
+        cell = cells[insertIndex];
+      }
+
+      // set cell, and turnCount will represent the number of filled cells
+      var setBgColor = turnColor();
+      cell.style.backgroundColor = setBgColor;
+      turnCount++; // keep in sync with # of filled cells
+
+      // check game over or set next player's turn
+      // the min # of turns before winning is 8 (because turns are 1-indexed)
+      if (turnCount >= 7 && checkWin(setBgColor)) {
+        win = true;
+      } else {
+        turn = turn ? 0 : 1;
+      }
+
+      displayTurn();
+    }
+
+
+    function displayTurn() {
+      var fullBoard = turnCount == cellsCount;
+
+      if (win) {
+        turnIndicator.innerHTML = winText + turnColor();
+      } else if (fullBoard) {
+        turnIndicator.innerHTML = 'No Winner!';
+      } else {
+        turnIndicator.innerHTML = turnText + turnColor();
+      }
+    }
+
+    function bind() {
+      turnIndicator = document.querySelector('.connect4--turn');
+      displayTurn();
+
+      board = document.querySelector('.connect4');
+      cells = board.querySelectorAll('td');
+
+      for (var i = 0; i < cells.length; i++) {
+        cells[i].index = i;
+        cells[i].onclick = cellClick;
+      }
+    }
+
+    return {
+      bind: bind
+    }
+  }());
+
+
+  window.onload = Connect4.bind;
+</script>
+</body>
+</html>
