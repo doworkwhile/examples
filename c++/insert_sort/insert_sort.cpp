@@ -22,15 +22,10 @@ void printArray(int* ary, int max)
 
 void insertSort(int* ary, int max)
 {
-  for (int inner = 1; inner < max; inner++) {
-    int swapVal = ary[inner];
-    int backStep = inner;
-
-    for (; backStep > 0 && swapVal < ary[backStep - 1]; backStep--) {
-      ary[backStep] = ary[backStep - 1];
+  for (int i = 1; i < max; i++) {
+    for (int j = i; j > 0 && ary[j] < ary[j - 1]; j--) {
+      swap(ary[j], ary[j-1]);
     }
-
-    ary[backStep] = swapVal;
   }
 }
 

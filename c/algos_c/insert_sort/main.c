@@ -21,12 +21,11 @@ void printArray(int* ary, int aryLen)
 void insertSort(int* ary, int aryLen)
 {
 	for (int i = 1; i < aryLen; i++) {
-		int check = ary[i];
-		int countBack = i - 1;
-		for (; countBack >= 0 && check < ary[countBack]; countBack--) {
-			ary[countBack+1] = ary[countBack];
+		for (int j = i; j > 0 && ary[j] < ary[j-1]; j--) {
+			int temp = ary[j];
+			ary[j] = ary[j-1];
+			ary[j-1] = temp;
 		}
-		ary[countBack+1] = check;
 	}
 }
 
