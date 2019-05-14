@@ -82,11 +82,36 @@ int main() {
   printList(&list);
   printf("The list should now be back in sorted order!\n");
 
-  printf("Delete index 2\n");
-  list.deleteLinkAtIndex(2);
-  printList(&list);
-
   printf("Knuth Shuffle the list\n");
   list.shuffle();
+  printList(&list);
+
+  printf("Bubble sort the list back into order\n");
+  list.bubbleSort();
+  printList(&list);
+
+  printf("Knuth Shuffle again\n");
+  list.shuffle();
+  printList(&list);
+
+  printf("Insert sort the list back into order\n");
+  list.insertSort();
+  printList(&list);
+
+  int foundIndex;
+  printf("Binary Search for one of the values\n");
+  foundIndex = list.binarySearch(link5->value);
+  printf("Found (%d) at index: %d\n", link5->value, foundIndex);
+
+  printf("Binary Search for a value LOWER than any you could have generated\n");
+  foundIndex = list.binarySearch(-1);
+  printf("Found (%d) at index: %d\n", -1, foundIndex);
+
+  printf("Binary Search for a value HIGHER than any you could have generated\n");
+  foundIndex = list.binarySearch(maxRand);
+  printf("Found (%d) at index: %d\n", maxRand, foundIndex);
+
+  printf("Delete index 2\n");
+  list.deleteLinkAtIndex(2);
   printList(&list);
 }

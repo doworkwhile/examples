@@ -22,6 +22,9 @@ public:
   void shuffle();
   void insert(DoubleLink* link);
   void deleteLinkAtIndex(int index);
+  void bubbleSort();
+  void insertSort();
+  int binarySearch(int findMe);
 };
 
 SortedDoubleLinkedList::SortedDoubleLinkedList()
@@ -229,6 +232,55 @@ void SortedDoubleLinkedList::deleteLinkAtIndex(int index)
   toDelete->next->prev = toDelete->prev;
   delete toDelete;
   size--;
+}
+
+void SortedDoubleLinkedList::bubbleSort()
+{
+  for (int outer = size - 1; outer > 0; outer--) {
+    for (int i = 0; i < outer; i++) {
+      DoubleLink* first = getLinkAtIndex(i);
+      DoubleLink* second = getLinkAtIndex(i + 1);
+      if (first->value > second->value) {
+        swapLinks(i, i + 1);
+      }
+    }
+  }
+}
+
+void SortedDoubleLinkedList::insertSort()
+{
+  for (int i = 1; i < size; i++) {
+    for (
+      int j = i;
+      (
+        j > 0 &&
+        getLinkAtIndex(j)->value < getLinkAtIndex(j-1)->value
+      );
+      j--
+    ) {
+      swapLinks(j, j-1);
+    }
+  }
+}
+
+int SortedDoubleLinkedList::binarySearch(int findMe)
+{
+  int begin = 0;
+  int end = size;
+
+  while (begin <= end) {
+    int check = (begin + end) / 2;
+    int valAtCheck = getLinkAtIndex(check)->value;
+
+    if (findMe == valAtCheck) {
+      return check;
+    } else if (findMe > valAtCheck) {
+      begin = check + 1;
+    } else { // findMe < valAtCheck
+      end = check - 1;
+    }
+  }
+  return -1;
 }
 
 #endif
