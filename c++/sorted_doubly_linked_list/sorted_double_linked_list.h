@@ -20,6 +20,7 @@ public:
   bool insertLinkAtIndex(DoubleLink* link, int index);
   void swapLinks(int i1, int i2);
   void shuffle();
+  void insert(DoubleLink* link);
 };
 
 SortedDoubleLinkedList::SortedDoubleLinkedList()
@@ -50,13 +51,14 @@ void SortedDoubleLinkedList::addLinkAtEnd(DoubleLink* link)
 
   link->next = head;
   link->prev = tail();
-
+  // always break tail()->next before head->prev, because tail() is head->prev
   tail()->next = link;
-  head->prev = link;  
+  head->prev = link;
 
   size++;
 }
 
+// index cannot be negative
 DoubleLink* SortedDoubleLinkedList::getLinkAtIndex(int index)
 {
   if (head == NULL || index < 0) {
@@ -70,6 +72,7 @@ DoubleLink* SortedDoubleLinkedList::getLinkAtIndex(int index)
   return found;
 }
 
+// index cannot be negative
 bool SortedDoubleLinkedList::insertLinkAtIndex(DoubleLink* link, int index)
 {
   DoubleLink* at = getLinkAtIndex(index);
@@ -82,11 +85,20 @@ bool SortedDoubleLinkedList::insertLinkAtIndex(DoubleLink* link, int index)
   at->prev->next = link;
   at->prev = link;
 
+  // index 0 is head
+  // % size, because index can wrap
+  if (index % size == 0) {
+    head = link;
+  }
+
   size++;
+
 
   return true;
 }
 
+// indexes cannot be negative
+// if indexes are equal (or % size and equal) do nothing
 void SortedDoubleLinkedList::swapLinks(int i1, int i2)
 {
   // quick fail conditions
@@ -149,6 +161,35 @@ void SortedDoubleLinkedList::shuffle()
   for (int i = size - 1; i > 0; i--) {
     int swapAt = rand() % i;
     swapLinks(swapAt, i);
+  }
+}
+
+// always inserts before larger or equal value
+void SortedDoubleLinkedList::insert(DoubleLink* link)
+{
+  if (head == NULL) {
+    head = link;
+    link->prev = link;
+    link->next = link;
+    size++;
+    return;
+  }
+
+  // if larger than tail
+  int key = link->value;
+  if (tail()->value < key) {
+    addLinkAtEnd(link);
+    return;
+  }
+
+  // must not be larger than tail
+  DoubleLink* current = head;
+  for (int i = 0; i < size; i++) {
+    if (current->value >= key) {
+      insertLinkAtIndex(link, i);
+      break;
+    }
+    current = current->next;
   }
 }
 
