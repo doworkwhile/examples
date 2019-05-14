@@ -40,20 +40,20 @@ int main() {
     v1, v2, v3, v4, v5
   );
 
-  DoubleLink link1 = DoubleLink(v1);
-  DoubleLink link2 = DoubleLink(v2);
-  DoubleLink link3 = DoubleLink(v3);
-  DoubleLink link4 = DoubleLink(v4);
-  DoubleLink link5 = DoubleLink(v5);
+  DoubleLink* link1 = new DoubleLink(v1);
+  DoubleLink* link2 = new DoubleLink(v2);
+  DoubleLink* link3 = new DoubleLink(v3);
+  DoubleLink* link4 = new DoubleLink(v4);
+  DoubleLink* link5 = new DoubleLink(v5);
   SortedDoubleLinkedList list = SortedDoubleLinkedList();
 
   printf("Insert the items into a list\n");
   printf("The function should ensure ascending order!\n");
-  list.insert(&link1);
-  list.insert(&link2);
-  list.insert(&link3);
-  list.insert(&link4);
-  list.insert(&link5);
+  list.insert(link1);
+  list.insert(link2);
+  list.insert(link3);
+  list.insert(link4);
+  list.insert(link5);
   printList(&list);
 
   printf("Swap indexes 1 and 3\n");
@@ -81,6 +81,10 @@ int main() {
   list.swapLinks(4, 0);
   printList(&list);
   printf("The list should now be back in sorted order!\n");
+
+  printf("Delete index 2\n");
+  list.deleteLinkAtIndex(2);
+  printList(&list);
 
   printf("Knuth Shuffle the list\n");
   list.shuffle();

@@ -21,6 +21,7 @@ public:
   void swapLinks(int i1, int i2);
   void shuffle();
   void insert(DoubleLink* link);
+  void deleteLinkAtIndex(int index);
 };
 
 SortedDoubleLinkedList::SortedDoubleLinkedList()
@@ -28,7 +29,22 @@ SortedDoubleLinkedList::SortedDoubleLinkedList()
   head = NULL;
   size = 0;
 }
-SortedDoubleLinkedList::~SortedDoubleLinkedList() {}
+SortedDoubleLinkedList::~SortedDoubleLinkedList() {
+  if (head == NULL) {
+    return;
+  }
+  if (size == 1) {
+    delete head;
+    return;
+  }
+
+  DoubleLink* start = head;
+  for (int i = 0; i < size; i++) {
+    DoubleLink* old = start;
+    start = start->next;
+    delete old;
+  }
+}
 
 DoubleLink* SortedDoubleLinkedList::tail()
 {
@@ -66,7 +82,7 @@ DoubleLink* SortedDoubleLinkedList::getLinkAtIndex(int index)
   }
 
   DoubleLink* found = head;
-  for (int i = 0; i < index; i++) {
+  for (int i = 0; i < (index % size); i++) {
     found = found->next;
   }
   return found;
@@ -191,6 +207,28 @@ void SortedDoubleLinkedList::insert(DoubleLink* link)
     }
     current = current->next;
   }
+}
+
+void SortedDoubleLinkedList::deleteLinkAtIndex(int index)
+{
+  if (head == NULL) {
+    return;
+  }
+
+  int realIndex = index % size;
+  if (size == 1 && realIndex == 0) {
+    delete head;
+    return;
+  }
+
+  DoubleLink* toDelete = head;
+  for (int i = 0; i < realIndex; i++) {
+    toDelete = toDelete->next;
+  }
+  toDelete->prev->next = toDelete->next;
+  toDelete->next->prev = toDelete->prev;
+  delete toDelete;
+  size--;
 }
 
 #endif
