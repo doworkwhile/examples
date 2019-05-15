@@ -12,7 +12,7 @@ void printArray(int* ary, int size)
   cout << ary[i] << endl;
 }
 
-void merge(int* ary, int* cpy, int l, int m, int r, int c)
+void merge(int* ary, int* cpy, int l, int m, int r)
 {
   int lLen = m - l;
   int rLen = r - m;
@@ -45,7 +45,7 @@ void merge(int* ary, int* cpy, int l, int m, int r, int c)
 
 }
 
-void mergeSort(int* ary, int* cpy, int l, int r, int c)
+void mergeSort(int* ary, int* cpy, int l, int r)
 {
 
   if (r - l < 2) {
@@ -54,9 +54,9 @@ void mergeSort(int* ary, int* cpy, int l, int r, int c)
 
   int mid = (l + r) / 2;
 
-  mergeSort(ary, cpy, l, mid, c+1);
-  mergeSort(ary, cpy, mid, r, c+1);
-  merge(ary, cpy, l, mid, r, c);
+  mergeSort(ary, cpy, l, mid);
+  mergeSort(ary, cpy, mid, r);
+  merge(ary, cpy, l, mid, r);
 }
 
 
@@ -78,7 +78,7 @@ int main()
 
   fillArray(&ary[0], arrayLen, randRange);
   printArray(&ary[0], arrayLen);
-  mergeSort(&ary[0], &cpy[0], 0, arrayLen, 0);
+  mergeSort(&ary[0], &cpy[0], 0, arrayLen);
   printArray(&ary[0], arrayLen);
 
   return 0;
