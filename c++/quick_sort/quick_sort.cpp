@@ -46,7 +46,7 @@ void quicksort(int* ary, int start, int end)
   int pivot = ary[end];
   int partAt = partition(ary, start, end, pivot);
   quicksort(ary, start, partAt - 1);
-  quicksort(ary, partAt + 1, end);
+  quicksort(ary, partAt, end);
 }
 
 
