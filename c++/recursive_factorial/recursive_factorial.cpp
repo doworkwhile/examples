@@ -2,8 +2,9 @@
 
 using namespace std;
 
-int factorial(int i) {
-  if (i == 1 || i == 0) {
+int factorial(int i)
+{
+  if (i < 2) {
     return 1;
   }
   return i * factorial(i - 1);
