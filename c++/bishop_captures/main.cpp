@@ -11,7 +11,7 @@ public:
   int y;
 };
 
-int getNByNMinus1(int n) 
+int calcNewCollisions(int n)
 {
   if (n < 2) {
     return 0;
@@ -42,13 +42,13 @@ int main()
     // inc the # of bishops on this rdiag
     int rDiag = temp.x + temp.y;
     RDiagCounts[rDiag] += 1;
-    int newCollisionCount = getNByNMinus1(RDiagCounts[rDiag]);
+    int newCollisionCount = calcNewCollisions(RDiagCounts[rDiag]);
     collisionCount += newCollisionCount;
 
     // inc the # of bishops on this ldiag
     int lDiag = rows - temp.x + temp.y;
     LDiagCounts[lDiag] += 1;
-    newCollisionCount = getNByNMinus1(LDiagCounts[lDiag]);
+    newCollisionCount = calcNewCollisions(LDiagCounts[lDiag]);
     collisionCount += newCollisionCount;
   }
   for (int i = 0 ; i < RDiagCounts.size(); i++) {
