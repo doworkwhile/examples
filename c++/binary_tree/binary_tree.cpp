@@ -24,11 +24,23 @@ public:
   Leaf* findLeaf(int);
   int findDepth(int);
   vector<int> toSortedVector();
+  int getLeafMaxDepth(const Leaf* current);
+  int getMaxDepth();
+  void getLeafsAtDepth(vector<Leaf*>*, int);
+  void DSW();
 private:
   void freeLeaf(Leaf*);
   void addFromLeaf(Leaf*, Leaf*);
   void printFromLeaf(Leaf*, int);
   void collectFromLeaf(vector<int>*, Leaf*);
+  int getLeafHasChild(const Leaf*);
+  void collectDepthFromLeaf(vector<int>*, const Leaf*, const int);
+  void collectLeafAtDepth(vector<Leaf*>*, Leaf*, int, int);
+  void createVine();
+  Leaf* rotateRightIntoVine(Leaf*, Leaf*, Leaf*);
+  void rebuildTreeFromVine();
+  void rotateRebuildTree(int);
+  void rotateLeftIntoTree(Leaf*, Leaf*, Leaf*);
 };
 
 BinaryTree::~BinaryTree()
@@ -96,10 +108,12 @@ void BinaryTree::printFromLeaf(Leaf* current, int depth)
   }
 
   for (int i = 0; i < depth; i++) {
-    cout << "----|";
+    cout << "-----|";
   }
   cout << "(";
   if (current->value < 10) {
+    cout << "  ";
+  } else if (current->value < 100) {
     cout << " ";
   }
   cout << current->value << ")" << endl;
@@ -176,7 +190,175 @@ void BinaryTree::collectFromLeaf(vector<int>* v, Leaf* current)
   }
 }
 
+int BinaryTree::getLeafHasChild(const Leaf* current)
+{
+  return !!current->smallChild || current->bigChild;
+}
 
+void BinaryTree::collectDepthFromLeaf(
+  vector<int>* v,
+  const Leaf* current,
+  const int depth)
+{
+  if (current->smallChild) {
+    collectDepthFromLeaf(v, current->smallChild, depth + 1);
+  }
+  v->push_back(depth);
+  if (current->bigChild) {
+    collectDepthFromLeaf(v, current->bigChild, depth + 1);
+  }
+}
+
+int BinaryTree::getLeafMaxDepth(const Leaf* current)
+{
+  int hasChild = getLeafHasChild(current);
+  if (!hasChild) {
+    return 0;
+  }
+
+  vector<int> max;
+  collectDepthFromLeaf(&max, current, 0);
+  int bigMax = 0;
+  for (int i = 0 ; i < max.size(); i++) {
+    if (max[i] > bigMax) {
+      bigMax = max[i];
+    }
+  }
+  return bigMax;
+}
+
+void BinaryTree::collectLeafAtDepth(
+  vector<Leaf*>* collection,
+  Leaf* checking,
+  int current,
+  int search)
+{
+  if (checking->smallChild) {
+    collectLeafAtDepth(collection, checking->smallChild, current + 1, search);
+  }
+  if (current == search) {
+    collection->push_back(checking);
+  }
+  if (checking->bigChild) {
+    collectLeafAtDepth(collection, checking->bigChild, current + 1, search);
+  }
+}
+
+void BinaryTree::getLeafsAtDepth(
+  vector<Leaf*>* collection,
+  int depth)
+{
+  if (!root) {
+    return;
+  }
+
+  collectLeafAtDepth(collection, root, 0, depth);
+}
+
+int BinaryTree::getMaxDepth()
+{
+  if (!root) {
+    return 0;
+  }
+
+  return getLeafMaxDepth(root);
+}
+
+void BinaryTree::DSW()
+{
+  if (!root) {
+    return;
+  }
+
+  createVine();
+  rebuildTreeFromVine();
+}
+
+void BinaryTree::createVine()
+{
+  Leaf* grandParent = NULL;
+  Leaf* parent = root;
+  Leaf* smallChild = NULL;
+
+  while (parent) {
+    smallChild = parent->smallChild;
+    if (smallChild) {
+      grandParent = rotateRightIntoVine(grandParent, parent, smallChild);
+      parent = smallChild;
+    } else {
+      grandParent = parent;
+      parent = parent->bigChild;
+    }
+  }
+}
+
+Leaf* BinaryTree::rotateRightIntoVine(Leaf* grandParent, Leaf* parent, Leaf* smallChild)
+{
+  if (grandParent) {
+    grandParent->bigChild = smallChild;
+  } else {
+    root = smallChild;
+  }
+  parent->smallChild = smallChild->bigChild;
+  smallChild->bigChild = parent;
+  return grandParent;
+}
+
+void BinaryTree::rebuildTreeFromVine()
+{
+    int n = 0;
+    for (Leaf* temp = root; !!temp; temp = temp->bigChild) {
+      n++;
+    }
+
+    int nplus1 = n + 1;
+    int ndx = 0;
+    while (1 < nplus1) {
+      nplus1 = (nplus1 >> 1);
+      ndx++;
+    }
+    int doRotations = (1 << ndx) - 1;
+    // rotate first && every other node to once left
+    rotateRebuildTree(n - doRotations);
+
+    // keep rotating every other until balanced
+    while(doRotations > 1) {
+      doRotations /= 2;
+      rotateRebuildTree(doRotations);
+    }
+}
+
+void BinaryTree::rotateRebuildTree(int max)
+{
+  Leaf* grandParent = NULL;
+  Leaf* parent = root;
+  Leaf* bigChild = root->bigChild;
+  for (; max > 0; max--) {
+    if (bigChild) {
+      rotateLeftIntoTree(grandParent, parent, bigChild);
+      grandParent = bigChild;
+      parent = grandParent->bigChild;
+      if (parent) {
+        bigChild = parent->bigChild;
+      } else {
+        bigChild = NULL;
+      }
+    } else {
+      break;
+    }
+  }
+}
+
+void BinaryTree::rotateLeftIntoTree(Leaf* grandParent, Leaf* parent, Leaf* bigChild)
+{
+  if (grandParent) {
+    grandParent->bigChild = bigChild;
+  } else {
+    root = bigChild;
+  }
+  parent->bigChild = bigChild->smallChild;
+  bigChild->smallChild = parent;
+}
 
 int main()
 {
@@ -185,7 +367,7 @@ int main()
   BinaryTree b = BinaryTree();
 
   int leafLen = 30;
-  int randRange = 100;
+  int randRange = 1000;
   Leaf* ary[leafLen];
 
   for (int i = 0; i < leafLen; i++) {
@@ -208,5 +390,21 @@ int main()
   }
   cout << endl;
 
+  int maxDepth = b.getMaxDepth();
+  cout << "Max Depth: " << maxDepth << endl;
+  int checkDepth = rand() % maxDepth;
+  vector<Leaf*> leafsAtDepth;
+  b.getLeafsAtDepth(&leafsAtDepth, checkDepth);
+  cout << "Leaves at random index " << checkDepth;
+  cout << ": [";
+  for (int i = 0; i < leafsAtDepth.size(); i++) {
+    cout << leafsAtDepth[i]->value << " ";
+  }
+  cout << "]";
+  cout << endl;
+  cout << "balancing with DSW" << endl;
+  b.DSW();
+  cout << "balanced" << endl;
+  b.print();
   return 0;
 }
