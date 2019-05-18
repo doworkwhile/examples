@@ -280,13 +280,20 @@ void BinaryTree::createVine()
   Leaf* parent = root;
   Leaf* smallChild = NULL;
 
+  // starting at root
+  // if there is a root smallChild
+  // -> attach smallChild to grandparent's bigChild
+  // -> set root to the smallChild
+  // else
+  // -> move to the right
+  // -> don't set root
   while (parent) {
     smallChild = parent->smallChild;
     if (smallChild) {
       grandParent = rotateRightIntoVine(grandParent, parent, smallChild);
       parent = smallChild;
     } else {
-      grandParent = parent;
+      grandParent = parent; // move down
       parent = parent->bigChild;
     }
   }
@@ -306,26 +313,28 @@ Leaf* BinaryTree::rotateRightIntoVine(Leaf* grandParent, Leaf* parent, Leaf* sma
 
 void BinaryTree::rebuildTreeFromVine()
 {
-    int n = 0;
-    for (Leaf* temp = root; !!temp; temp = temp->bigChild) {
-      n++;
-    }
+  // length of vine
+  int leafCount = 0;
+  for (Leaf* temp = root; !!temp; temp = temp->bigChild) {
+    leafCount++;
+  }
 
-    int nplus1 = n + 1;
-    int ndx = 0;
-    while (1 < nplus1) {
-      nplus1 = (nplus1 >> 1);
-      ndx++;
-    }
-    int doRotations = (1 << ndx) - 1;
-    // rotate first && every other node to once left
-    rotateRebuildTree(n - doRotations);
+  // MSB of length of vine+1
+  int leafCountShifts = leafCount + 1;
+  int leafCountMSB = 0;
+  while (1 < leafCountShifts) {
+    leafCountShifts = (leafCountShifts >> 1);
+    leafCountMSB++;
+  }
+  int doRotations = (1 << leafCountMSB) - 1;
+  // rotate left for every node to have a small child
+  rotateRebuildTree(leafCount - doRotations);
 
-    // keep rotating every other until balanced
-    while(doRotations > 1) {
-      doRotations /= 2;
-      rotateRebuildTree(doRotations);
-    }
+  // keep rotating every other until balanced
+  while(doRotations > 1) {
+    doRotations /= 2;
+    rotateRebuildTree(doRotations);
+  }
 }
 
 void BinaryTree::rotateRebuildTree(int max)
@@ -406,5 +415,7 @@ int main()
   b.DSW();
   cout << "balanced" << endl;
   b.print();
+  maxDepth = b.getMaxDepth();
+  cout << "Max Depth: " << maxDepth << endl;
   return 0;
 }
