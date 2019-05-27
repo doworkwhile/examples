@@ -14,7 +14,6 @@ def knuthShuffle(ary):
     temp = ary[swapI]
     ary[swapI] = ary[j]
     ary[j] = temp
-  pass
 
 def insertSort(ary):
   aryLen = len(ary)
@@ -25,11 +24,25 @@ def insertSort(ary):
       ary[j] = ary[j-1]
       ary[j-1] = temp
       j -= 1
-      pass
-  pass
 
-print ary
+def insertSortDesc(ary):
+  aryLen = len(ary)
+  for i in range(1, aryLen):
+    j = i
+    while j > 0 and ary[j] > ary[j-1]:
+      temp = ary[j]
+      ary[j] = ary[j-1]
+      ary[j-1] = temp
+      j -= 1
+
+
+
+print 'created', ary
 knuthShuffle(ary)
-print ary
+print 'shuffled', ary
 insertSort(ary)
-print ary
+print 'insert sort asc', ary
+knuthShuffle(ary)
+print 'shuffled', ary
+insertSortDesc(ary)
+print 'insert sort desc', ary
