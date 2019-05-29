@@ -104,9 +104,6 @@ class BinaryTree():
 
 
 
-
-
-
 bt = BinaryTree()
 bt.create(Leaf(5))
 bt.create(Leaf(8))
