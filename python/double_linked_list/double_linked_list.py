@@ -124,7 +124,7 @@ class DoubleLinkedList:
     elif self.head == secondNode:
       self.head = firstNode
 
-  def insertAt(self, v, i):
+  def insertAt(self, i, v):
     nodeAt = self.getIndex(i)
     if not nodeAt:
       self.addSorted(v)
@@ -219,56 +219,33 @@ class DoubleLinkedList:
       current = current.nxt
     return None
 
-dll = DoubleLinkedList()
+  def to_a(self):
+    if not self.head:
+      return []
 
-print "add 30, 10, 20. they should be sorted"
-dll.addSorted(30)
-dll.addSorted(10)
-dll.addSorted(20)
-print dll.to_s()
-print "swap the first and last indexes"
-dll.swapIndexes(0, 2)
-print dll.to_s()
-dll.swapIndexes(2, 0)
-print dll.to_s()
-print "can we find a 31?", dll.indexOf(31) != None
-print "can we find a 30? index", dll.indexOf(30)
-print "insert value at index: 5 @ 0, 7 @ 1, 15 @ 3, -82 @ 8, 25 @ -1, 14 @ -11"
-dll.insertAt(5, 0)
-dll.insertAt(7, 1)
-dll.insertAt(15, 3)
-dll.insertAt(-82, 8)
-dll.insertAt(25, -1)
-dll.insertAt(14, -11)
-print dll.to_s()
-print "now clear the list"
-dll.clear()
-print dll.to_s()
-print "add random numbers"
-randAry = list(map(lambda x: random.randint(10, 99), range(0, 10)))
-for i in randAry:
-  dll.insertAt(i, 0)
-print dll.to_s()
-print "insert sort!"
-dll.insertSort()
-print dll.to_s()
-print "tail value?", dll.tail().v
-lastI = dll.lastIndex()
-print "last index?", lastI
-print "swap the first and last indexes back and forth"
-dll.swapIndexes(0, lastI)
-print dll.to_s()
-dll.swapIndexes(lastI, 0)
-print dll.to_s()
-print "shuffle the nodes"
-dll.shuffle()
-print dll.to_s()
-print "bubble sort!"
-dll.bubbleSort()
-print dll.to_s()
-toFind = random.sample(randAry,1)[0]
-found = dll.find(toFind)
-print "finding item", toFind, found.__class__
-toFind = -1
-found = dll.find(toFind)
-print "finding item", toFind, found.__class__
+    ret = [ self.head.v ]
+    current = self.head.nxt
+    while current != self.head:
+      ret.append(current.v)
+      current = current.nxt
+    return ret
+
+  def delete(self, v):
+    node = self.find(v)
+    if not node:
+      return
+
+    self.deleteNode(node)
+
+  def deleteAt(self, i):
+    node = self.getIndex(i)
+    if not node:
+      return
+
+    self.deleteNode(node)
+
+  def deleteNode(self, n):
+    n.prev.nxt = n.nxt
+    n.nxt.prev = n.prev
+    if n == self.head:
+      self.head = n.nxt
