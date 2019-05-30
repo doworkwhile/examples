@@ -80,7 +80,7 @@ class DoubleLinkedList
     nil
   end
 
-  def insertAt(v, i)
+  def insertAt(i, v)
     unless head
       @head = Node.new(v)
       head.nxt = head
@@ -262,54 +262,40 @@ class DoubleLinkedList
     nil
   end
 
+  def to_a
+    return [] unless head
+
+    ret = [ head.value ]
+    current = head.nxt
+    while current != head
+      ret << current.value
+      current = current.nxt
+    end
+    ret
+  end
+
+  def delete(v)
+    node = find(v)
+    return unless node
+
+    removeNode(node)
+  end
+
+  def deleteAt(i)
+    node = getIndex(i)
+    return unless node
+
+    removeNode(node)
+  end
+
+  private
+
+  def removeNode(n)
+    n.prev.nxt = n.nxt
+    n.nxt.prev = n.prev
+    if n == self.head
+      self.head = n.nxt
+    end
+  end
+
 end
-
-dll = DoubleLinkedList.new
-
-puts "add 30, 10, 20. they should be sorted"
-dll.add(30)
-dll.add(10)
-dll.add(20)
-puts dll.to_s
-puts "swap the first and last indexes"
-dll.swapIndexes(0, 2)
-puts dll.to_s
-puts "can we find a 31? #{dll.indexOf(31) != nil}"
-puts "insert value at index: 5 @ 0, 7 @ 1, 15 @ 3, -82 @ 8, 25 @ -1, 14 @ -11"
-dll.insertAt(5, 0)
-dll.insertAt(7, 1)
-dll.insertAt(15, 3)
-dll.insertAt(-82, 8)
-dll.insertAt(25, -1)
-dll.insertAt(14, -11)
-puts dll.to_s
-puts "now clear the list"
-dll.clear
-puts dll.to_s
-puts "add random numbers"
-randAry = [*0...10].map { 10 + rand(89) }.each { |e| dll.insertAt(e, 0) }
-puts dll.to_s
-puts "insert sort!"
-dll.insertSort
-puts dll.to_s
-puts "tail value? #{dll.tail.value}"
-lastI = dll.lastIndex
-puts "last index? #{lastI}"
-puts "swap the first and last indexes back and forth"
-dll.swapIndexes(0, lastI)
-puts dll.to_s
-dll.swapIndexes(lastI, 0)
-puts dll.to_s
-puts "shuffle the nodes"
-dll.shuffle
-puts dll.to_s
-puts "bubble sort!"
-dll.bubbleSort
-puts dll.to_s
-toFind = randAry.sample
-found = dll.find(toFind)
-puts "finding item #{toFind}: #{found.class}"
-toFind = -1
-found = dll.find(toFind)
-puts "finding item #{toFind}: #{found.class}"
-

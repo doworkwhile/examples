@@ -48,7 +48,7 @@ DoubleLinkedList.prototype.to_s = function () {
 
   let ret = '[ ' + this.head.value;
   let current = this.head.next;
-  if (current) {
+  if (current != this.head) {
     ret += ', ';
   }
   while (current && current != this.head) {
@@ -305,55 +305,25 @@ DoubleLinkedList.prototype.doDeletion = function (node) {
   }
 };
 
-const dll = new DoubleLinkedList();
-dll.addSorted(30);
-dll.addSorted(10);
-dll.addSorted(20);
-console.log(dll.to_s());
-console.log(
-  dll.getIndex(2).value == 30,
-  dll.getIndex(-1).value == 30
-);
-console.log(
-  dll.indexOf(30) == 2,
-  dll.indexOf(10) == 0,
-  dll.indexOf(5) == -1
-);
-dll.swapIndexes(0, 2);
-console.log(dll.to_s()); // [ 10, 20, 30 ]
-dll.swapIndexes(2, 0);
-console.log(dll.to_s()); // [ 30, 20, 10 ]
-dll.insertAt(0, 5);
-dll.insertAt(-1, 50);
-dll.insertAt(3, 40);
-dll.insertAt(6, 55);
-console.log(dll.to_s()); // [ 5, 30, 20, 40, 10, 50, 55 ]
-dll.clear();
-console.log(dll.to_s());
-const randMin = 10;
-const randMax = 100;
-const randAry = new Array(10)
-  .fill(true)
-  .map(() => {
-    return randMin + Math.round(Math.random() * (randMax - randMin - 1));
-  });
-randAry.forEach(e => dll.insertAt(0, e));
-console.log(dll.to_s());
-dll.insertSort();
-console.log(dll.to_s());
-dll.shuffle();
-console.log(dll.to_s());
-dll.bubbleSort();
-console.log(dll.to_s());
-const toFind = randAry[Math.round(Math.random() * randAry.length)];
-console.log('finding', toFind, dll.find(toFind) != null);
-console.log('not finding', -1, dll.find(-1) == null);
-console.log('delete index 0', dll.deleteAt(0));
-console.log(dll.to_s());
-console.log('delete index -1', dll.deleteAt(-1));
-console.log(dll.to_s());
-console.log('deleting', toFind, dll.delete(toFind));
-console.log(dll.to_s());
-console.log('deleting', -1, dll.delete(-1));
-console.log(dll.to_s());
+DoubleLinkedList.prototype.to_a = function () {
+  if (!this.head) {
+    return [];
+  }
 
+  let ret = [ this.head.value ];
+  let current = this.head.next;
+  while (current != this.head) {
+    ret.push(current.value);
+    current = current.next;
+  }
+  return ret;
+};
+
+DoubleLinkedList.prototype.tail = function () {
+  if (!this.head) {
+    return null;
+  }
+  return this.head.prev;
+};
+
+module.exports = DoubleLinkedList;
