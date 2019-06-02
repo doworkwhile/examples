@@ -39,57 +39,40 @@ class BinaryTree():
   def delete(self, v):
     if not self.head:
       return None
+
     # find node of value v, also store the parent
     last = None
     top = self.head
-    lastDirRight = False
-    while top != None and top.v != v:
+    while top.v != v:
+      last = top
       if v > top.v:
-        last = top
         top = top.right
-        lastDirRight = True
       elif v < top.v:
-        last = top
         top = top.left
-        lastDirRight = False
-    if not top.v == v: # node does not exist
-      return
-    # now top.v == v
+      if not top: # could not find value
+        return None
+    lastDirRight = last == None ? False : (last.right == top)
 
-    # if no children, simply disconnect from parent   
-    if not top.right and not top.left:
-      if not last: # if we are the head, we don't have parents
-        self.head = None
+    if top.right and top.left:
+      self.__deleteWhenLeafHasBothChildren(top)
+    elif top.right:
+      self.__deleteWhenLeafHasOneChild(top.right, last, lastDirRight)
+    elif top.left:
+      self.__deleteWhenLeafHasOneChild(top.left, last, lastDirRight)
+    else:
+      self.__deleteWhenLeafHasOneChild(None, last, lastDirRight)
+
+  def __deleteReplaceTop(self, top, last, lastDirRight):
+    if not last:
+      self.head = top
+    else:
+      if lastDirRight:
+        last.right = top
       else:
-        if lastDirRight:
-          last.right = None
-        else:
-          last.left = None
-      return
+        last.left = top
 
-    # if only right child
-    if top.right and not top.left:
-      if not last:
-        self.head = top.right
-      else:
-        if lastDirRight:
-          last.right = top.right
-        else:
-          last.left = top.right
-      return
-
-    # if only left child
-    if top.left and not top.right:
-      if not last:
-        self.head = top.left
-      else:
-        if lastDirRight:
-          last.right = top.left
-        else:
-          last.left = top.left
-      return
-
-    # must be both children
+  def __deleteWhenLeafHasBothChildren(self, top):
+    # top.right is guaranteed to not be nil
     minParent = top.right
     minAtRight = top.right
     while minAtRight.left != None:
@@ -102,6 +85,20 @@ class BinaryTree():
     else:
       minParent.left = minAtRight.right
 
+  def print_tree(self):
+    self.print_recursive(self.head, 0)
+
+  def print_recursive(self, node, depth):
+    if not node:
+      return
+    self.print_recursive(node.right, depth + 1)
+    for i in xrange(depth):
+      print '-----|',
+    print node.v
+    self.print_recursive(node.left, depth + 1)
+
+
+
 
 
 bt = BinaryTree()
@@ -109,7 +106,10 @@ bt.create(Leaf(5))
 bt.create(Leaf(8))
 bt.create(Leaf(7))
 bt.create(Leaf(9))
-print bt.head.v
-print bt.head.right.v
-print bt.head.right.left.v
-print bt.head.right.right.v
+bt.print_tree()
+bt.delete(8)
+bt.print_tree()
+# print bt.head.v
+# print bt.head.right.v
+# print bt.head.right.left.v
+# print bt.head.right.right.v

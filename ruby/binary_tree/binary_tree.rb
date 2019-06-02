@@ -72,24 +72,21 @@ class BinaryTree
       end 
       return false unless current
     end
-    
+
     # 4 possible conditions:
     # if both children
-    # if no children
     # if right child
     # if left child
-    if !current.right && !current.left
-      return deletionCaseNoChildren(current, parent, lastWentRight)
-    elsif current.right && current.left
-      return deletionCaseBothChildren(current, parent)
+    # else no children
+    if current.right && current.left
+      return deletionCaseBothChildren(current)
     elsif current.right
-      return deletionCaseOneChild(parent, current.right, lastWentRight)
+      return deletionReplaceTop(parent, current.right, lastWentRight)
     elsif current.left
-      return deletionCaseOneChild(parent, current.left, lastWentRight)
+      return deletionReplaceTop(parent, current.left, lastWentRight)
+    else
+      return deletionReplaceTop(parent, nil, lastWentRight)
     end
-
-    # just in case
-    false
   end
 
   def to_a
@@ -142,20 +139,7 @@ class BinaryTree
     ret
   end
 
-  def deletionCaseNoChildren(current, parent, directionRight)
-    unless parent
-      @head = nil
-    else
-      if directionRight
-        parent.right = nil
-      else
-        parent.left = nil
-      end
-    end
-    true
-  end
-
-  def deletionCaseBothChildren(current, parent)
+  def deletionCaseBothChildren(current)
     return false unless current.right
 
     # find the node larger than current
@@ -179,9 +163,9 @@ class BinaryTree
     true
   end
 
-  def deletionCaseOneChild(parent, successor, directionRight)
+  def deletionReplaceTop(parent, successor, directionRight)
     unless parent
-      self.head = successor
+      @head = successor
     else
       if directionRight
         parent.right = successor
