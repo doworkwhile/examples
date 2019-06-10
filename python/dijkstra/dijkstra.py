@@ -90,8 +90,10 @@ def dijksta(graph, start, end):
     # set visited
     cheapestVertex.known = True
 
-    # skip if cost is 'inf', which means this node is not reachable
-    if not cheapestVertex.cost == float("inf"):
+    # if cost is 'inf', we have no more reachable nodes
+    if cheapestVertex.cost == float("inf"):
+      current = end
+    else:
       # for each neighbor
       for pathAndCost in graph.nodeIter(cheapestVertex.index):
         neighbor = pathAndCost[0]
