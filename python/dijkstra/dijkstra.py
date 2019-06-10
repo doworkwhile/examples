@@ -73,6 +73,8 @@ class VertexRecord:
     self.prev = -1
 
 # find the path from start to end through an undirected graph
+# without using a priority queue, we have to visit every vertex record
+# to find the next minimum cost
 def dijksta(graph, start, end):
   vertexes = [VertexRecord(i) for i in xrange(graph.nodeCount)]
 
@@ -93,19 +95,20 @@ def dijksta(graph, start, end):
     # if cost is 'inf', we have no more reachable nodes
     if cheapestVertex.cost == float("inf"):
       current = end
-    else:
-      # for each neighbor
-      for pathAndCost in graph.nodeIter(cheapestVertex.index):
-        neighbor = pathAndCost[0]
-        neighborCost = pathAndCost[1]
-        neighborVertex = vertexes[neighbor]
+      break
 
-        # if the last recorded vertex cost is less than the cost
-        # from our neighbor, change the vertext cost
-        newCost = cheapestVertex.cost + neighborCost
-        if not neighborVertex.known and neighborVertex.cost > newCost:
-          neighborVertex.cost = newCost
-          neighborVertex.prev = current
+    # for each neighbor
+    for pathAndCost in graph.nodeIter(cheapestVertex.index):
+      neighbor = pathAndCost[0]
+      neighborCost = pathAndCost[1]
+      neighborVertex = vertexes[neighbor]
+
+      # if the last recorded vertex cost is less than the cost
+      # from our neighbor, change the vertext cost
+      newCost = cheapestVertex.cost + neighborCost
+      if not neighborVertex.known and neighborVertex.cost > newCost:
+        neighborVertex.cost = newCost
+        neighborVertex.prev = current
 
   # current is end
   # is the final node unreachable
