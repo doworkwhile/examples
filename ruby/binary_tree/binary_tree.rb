@@ -60,14 +60,14 @@ class BinaryTree
     # and save a boolean that indicates if we last went right(t) or left(f)
     parent = nil
     current = @head
-    lastWentRight = false
+    last_went_right = false
     while current.value != v
       parent = current
       if v > current.value
-        lastWentRight = true
+        last_went_right = true
         current = current.right
       else
-        lastWentRight = false
+        last_went_right = false
         current = current.left
       end 
       return false unless current
@@ -79,13 +79,13 @@ class BinaryTree
     # if left child
     # else no children
     if current.right && current.left
-      return deletionCaseBothChildren(current)
+      return deletion_case_both_children(current)
     elsif current.right
-      return deletionReplaceTop(parent, current.right, lastWentRight)
+      return deletion_replace_top(parent, current.right, last_went_right)
     elsif current.left
-      return deletionReplaceTop(parent, current.left, lastWentRight)
+      return deletion_replace_top(parent, current.left, last_went_right)
     else
-      return deletionReplaceTop(parent, nil, lastWentRight)
+      return deletion_replace_top(parent, nil, last_went_right)
     end
   end
 
@@ -122,56 +122,56 @@ class BinaryTree
   end
 
   def depth_count(depth)
-    foundAtDepth = 0
-    traverseInOrder(@head, 1, depth) { |node, node_depth|
+    found_at_depth = 0
+    traverse_in_order(@head, 1, depth) { |node, node_depth|
       if node_depth == depth
-        foundAtDepth += 1
+        found_at_depth += 1
       end
     }
-    return foundAtDepth
+    return found_at_depth
   end
 
   def depth_find(depth)
-    setFoundAtDepth = []
-    traverseInOrder(@head, 1, depth) { |node, node_depth|
+    set_found_at_depth = []
+    traverse_in_order(@head, 1, depth) { |node, node_depth|
       if node_depth == depth
-        setFoundAtDepth << node.value
+        set_found_at_depth << node.value
       end
     }
-    return setFoundAtDepth
+    return set_found_at_depth
   end
 
   def make_linked_list
     return unless @head
     grandparent = nil
     parent = @head
-    leftChild = nil
+    left_child = nil
 
     # starting at parent = root
     while parent
-      leftChild = parent.left
+      left_child = parent.left
 
       # if there is a left child
-      if leftChild
+      if left_child
 
         # this is a "right rotation"
         # move the left child between the grandparent and parent
         # if there is no grandparent, the left child becomes the head
         if grandparent
-          grandparent.right = leftChild
+          grandparent.right = left_child
         else
-          @head = leftChild
+          @head = left_child
         end
         # now the grandparent.right/head is the left child
 
         # set the old link to left child to the left childs right child
-        parent.left = leftChild.right
+        parent.left = left_child.right
         # now the left childs right child is the parent
-        leftChild.right = parent
+        left_child.right = parent
 
         # what used to be down left, is now up
         # the old left child could still have more children so move up
-        parent = leftChild
+        parent = left_child
       else
         # if no left child
         # move down right
@@ -187,10 +187,10 @@ class BinaryTree
 
     # find the length of the linked list
     # don't just check the max depth, we don't need to check any left nodes
-    leafCount = 0
+    leaf_count = 0
     start = @head
     while start
-      leafCount += 1
+      leaf_count += 1
       start = start.right
     end
 
@@ -204,27 +204,27 @@ class BinaryTree
     # then 3/2 > 1, rotate(3/2) times
     # then 1/2 < 1, finished
 
-    count_msb_of = leafCount + 1
+    count_msb_of = leaf_count + 1
     msb_shifts = 0
     while (1 < count_msb_of)
       count_msb_of = (count_msb_of >> 1)
       msb_shifts += 1
     end
-    rotationsToHalf = (1 << msb_shifts) - 1
+    rotations_to_half = (1 << msb_shifts) - 1
 
 
-    firstRotation = leafCount - rotationsToHalf
-    balance_rotation(firstRotation)
+    first_rotation = leaf_count - rotations_to_half
+    balance_rotation(first_rotation)
 
-    while (rotationsToHalf > 1)
-      rotationsToHalf /= 2
-      balance_rotation(rotationsToHalf)
+    while (rotations_to_half > 1)
+      rotations_to_half /= 2
+      balance_rotation(rotations_to_half)
     end
 
   end
 
   def doPrint()
-    traverseInOrder(@head) { |n, d|
+    traverse_in_order(@head) { |n, d|
       (d - 1).times { print "---|" }
       puts "#{n.value}"
     }
@@ -256,35 +256,35 @@ class BinaryTree
     ret
   end
 
-  def deletionCaseBothChildren(current)
+  def deletion_case_both_children(current)
     return false unless current.right
 
     # find the node larger than current
     # we expect current.right to not be nil
-    minParent = current.right
-    minAtRight = current.right
-    while minAtRight.left != nil
-      minParent = minAtRight
-      minAtRight = minAtRight.left
+    min_parent = current.right
+    min_at_right = current.right
+    while min_at_right.left != nil
+      min_parent = min_at_right
+      min_at_right = min_at_right.left
     end
 
     # swap values
-    current.value = minAtRight.value
+    current.value = min_at_right.value
 
     # if replacement is immediately to right,
-    if minParent == minAtRight
+    if min_parent == min_at_right
       current.right = nil
     else
-      minParent.left = minAtRight.right
+      min_parent.left = min_at_right.right
     end
     true
   end
 
-  def deletionReplaceTop(parent, successor, directionRight)
+  def deletion_replace_top(parent, successor, direction_right)
     unless parent
       @head = successor
     else
-      if directionRight
+      if direction_right
         parent.right = successor
       else
         parent.left = successor
@@ -302,14 +302,14 @@ class BinaryTree
     ].max
   end
 
-  def traverseInOrder(start, current_depth=1, max_depth=nil)
+  def traverse_in_order(start, current_depth=1, max_depth=nil)
     return unless start
     return if max_depth && current_depth > max_depth
-    traverseInOrder(start.left, current_depth + 1, max_depth) { |e, n|
+    traverse_in_order(start.left, current_depth + 1, max_depth) { |e, n|
       yield(e, n)
     }
     yield(start, current_depth)
-    traverseInOrder(start.right, current_depth + 1, max_depth) { |e, n|
+    traverse_in_order(start.right, current_depth + 1, max_depth) { |e, n|
       yield(e, n)
     }
   end
