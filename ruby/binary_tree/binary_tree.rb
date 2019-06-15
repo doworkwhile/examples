@@ -15,19 +15,27 @@ class BinaryTree
     @head = nil
   end
 
+  # creates a leaf from the value
+  # traverses the tree, with a 'current' node, where current is first the head 
+  #   if current would become empty, because of no successor
+  #     add the new leaf to the empty spot
+  #   moving current to current.left when the value is smaller than current
+  #   moving current to current.right when the value is larger than current
+  #   when the value is equal to the current, the node has been added
   def add(v)
+    new_leaf = Leaf.new(v)
     unless @head
-      @head = Leaf.new(v)
+      @head = new_leaf
       return
     end
 
     current = @head
     while current.value != v
       if v < current.value
-        current.left = Leaf.new(v) unless current.left
+        current.left = new_leaf unless current.left
         current = current.left
       else
-        current.right = Leaf.new(v) unless current.right
+        current.right = new_leaf unless current.right
         current = current.right
       end
     end
@@ -73,7 +81,7 @@ class BinaryTree
       return false unless current
     end
 
-    # 4 possible conditions:
+    # 4 possible conditions when deleting:
     # if both children
     # if right child
     # if left child
@@ -141,6 +149,12 @@ class BinaryTree
     return set_found_at_depth
   end
 
+  # a binary tree is like a singly linked list when all nodes are connected
+  #   in only one direction
+  # and like a doubly linked list when leaves are connected left<->right 
+  # we can convert a binary tree to a linked list (right) by doing
+  #   "right rotations" wherever there is a left child, which makes the
+  #   parent the right child of the left child
   def make_linked_list
     return unless @head
     grandparent = nil
@@ -181,6 +195,9 @@ class BinaryTree
     end
   end
 
+  # we can convert a singly linked list (right) into a binary tree by doing
+  # "left rotations" to move the head to the middle value of the tree
+  # and building each level of the tree along the way
   def make_balanced
     # first convert to a linked list
     make_linked_list
@@ -194,16 +211,15 @@ class BinaryTree
       start = start.right
     end
 
+    # the number of rotations for the lowest level, which are the first set,
+    #   is equivalent to the number of leaves subtracted by
+    #   1 less than the nearest power of 2
     # EX
     # leaf_count = 10
-    # count_msb_of = 1011
-    # msb_shifts = 3
-    # rotations_to_half = 7 (1 << 3 = 1000 then 0111 after -1)
-    # first_rotation = 3 (10 - 7)
-    # then 7/2 > 1, rotate floor(7/2) times
-    # then 3/2 > 1, rotate(3/2) times
-    # then 1/2 < 1, finished
-
+    # count_msb_of = b1011
+    # (bit length of count_msb_of - 1) msb_shifts = 3
+    # rotations_to_half = 7 (1 << msb_shifts = b1000 then b0111 after -1)
+    # first_rotation = 3 (b1010 - b0111 = b0011)
     count_msb_of = leaf_count + 1
     msb_shifts = 0
     while (1 < count_msb_of)
@@ -211,11 +227,14 @@ class BinaryTree
       msb_shifts += 1
     end
     rotations_to_half = (1 << msb_shifts) - 1
-
-
     first_rotation = leaf_count - rotations_to_half
     balance_rotation(first_rotation)
 
+    # using 1 less than the nearest power of 2
+    # rotate half as many times until the half is less than 1
+    # then b0111/2 > 1, rotate floor(b011) times
+    # then b0011/2 > 1, rotate(b01) times
+    # then b0001/2 < 1, finished
     while (rotations_to_half > 1)
       rotations_to_half /= 2
       balance_rotation(rotations_to_half)
@@ -314,6 +333,18 @@ class BinaryTree
     }
   end
 
+=begin
+@ = head
+50@
+   \75
+ 60/   \90
+     80/
+to
+
+   75@
+50/   \90
+ \60 80/  
+=end
   # this is a "left rotation"
   # move the parent down left of the right child 
   def balance_rotation(rotations)
