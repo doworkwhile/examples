@@ -24,6 +24,27 @@ class LinkedList
     current.nxt = Node.new(v, current.nxt)
   end
 
+  def add_node(n)
+    unless @head
+      @head = n
+      n.nxt = nil
+      return
+    end
+
+    if n.value < @head.value
+      n.nxt = @head
+      @head = n
+      return
+    end
+
+    current = @head
+    while current.nxt && current.nxt.value < n.value
+      current = current.nxt
+    end
+    n.nxt = current.nxt
+    current.nxt = n
+  end
+
   def find(v)
     current = @head
     while (current)
@@ -32,6 +53,13 @@ class LinkedList
     end
 
     nil
+  end
+
+  def pop()
+    return nil unless @head
+    temp = @head
+    @head = @head.nxt
+    temp
   end
 
   def tail
@@ -78,13 +106,3 @@ class Node
   end
 
 end
-
-randItems = Array.new(10).map { rand(99) }
-puts randItems.to_s
-ll = LinkedList.new
-randItems.each { |i| ll.add(i) }
-puts ll.to_s
-toFind = randItems.sample
-foundIndex = ll.getIndexOf(toFind)
-puts "finding item #{toFind} at index #{foundIndex}"
-puts "tail item #{ll.tail.value}"

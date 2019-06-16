@@ -52,6 +52,38 @@ class DoubleLinkedList
     current.prev = temp;
   end
 
+  def add_node(n)
+    # no nodes
+    unless head
+      @head = n
+      head.nxt = head
+      head.prev = head
+      return
+    end
+
+    # only 1 node
+    if n.value < head.value
+      n.nxt = head
+      n.prev = tail
+      tail.nxt = temp
+      head.prev = temp
+      @head = temp
+      return
+    end
+
+    # more than 1 node
+    last = head
+    current = head.nxt
+    while current && current.value < n.value && current != head
+      last = current
+      current = current.nxt
+    end
+    n.nxt = current
+    n.prev = last
+    last.nxt = temp;
+    current.prev = temp;
+  end
+
   def find(v)
     return nil unless head
     return head if head.value == v
