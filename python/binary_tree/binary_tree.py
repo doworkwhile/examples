@@ -51,7 +51,7 @@ class BinaryTree():
         top = top.left
       if not top: # could not find value
         return None
-    lastDirRight = last == None ? False : (last.right == top)
+    lastDirRight = False if last == None else (last.right == top)
 
     if top.right and top.left:
       self.__deleteWhenLeafHasBothChildren(top)
@@ -97,6 +97,72 @@ class BinaryTree():
     print node.v
     self.print_recursive(node.left, depth + 1)
 
+  def make_linked_list(self):
+    grandparent = None
+    parent = self.head
+    leftChild = None
+
+    while parent:
+      leftChild = parent.left
+
+      if leftChild:
+        if grandparent:
+          grandparent.right = leftChild
+        else:
+          self.head = leftChild
+
+        parent.left = leftChild.right
+        leftChild.right = parent
+
+        parent = leftChild
+      else:
+        grandparent = parent
+        parent = parent.right
+
+  def make_balanced(self):
+    self.make_linked_list
+
+    leafCount = 0
+    current = self.head
+    while current:
+      leafCount += 1
+      current = current.right
+
+    msbOf = leafCount + 1
+    msbShifts = 0
+    while (msbOf > 1):
+      msbOf = msbOf >> 1
+      msbShifts += 1
+    levelRotations = (1 << msbShifts) - 1
+    firstRotations = leafCount - levelRotations
+    self.do_balance_rotations(firstRotations)
+
+    while levelRotations > 1:
+      levelRotations /= 2
+      self.do_balance_rotations(levelRotations)
+
+  def do_balance_rotations(self, rotations):
+    grandparent = None
+    parent = self.head
+    rightChild = parent.right
+
+    while rotations > 0:
+      if not rightChild:
+        break
+
+      if grandparent:
+        grandparent.right = rightChild
+      else:
+        self.head = rightChild
+      parent.right = rightChild.left
+      rightChild.left = parent
+
+      grandparent = rightChild
+      parent = grandparent.right
+      rightChild = parent.right if parent else None
+
+      rotations -= 1
+
 
 
 
@@ -109,7 +175,7 @@ bt.create(Leaf(9))
 bt.print_tree()
 bt.delete(8)
 bt.print_tree()
-# print bt.head.v
-# print bt.head.right.v
-# print bt.head.right.left.v
-# print bt.head.right.right.v
+bt.make_linked_list()
+bt.print_tree()
+bt.make_balanced()
+bt.print_tree()
