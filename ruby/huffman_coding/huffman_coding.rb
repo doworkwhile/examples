@@ -31,7 +31,7 @@ class HuffmanTree
     nil
   end
 
-  def symbol_and_freq_list
+  def symbol_and_prefix_list
     @realNodes.map { |hn|
       [hn.symbol, hn.prefix]
     }
