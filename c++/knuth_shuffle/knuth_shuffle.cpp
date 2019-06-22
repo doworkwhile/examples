@@ -1,14 +1,5 @@
 #include <stdio.h>
-#include <algorithm>
-#include <time.h>
-
-void knuthShuffle(int* ary, int aryLen)
-{
-  for (int i = aryLen - 1; i > 0; i--) {
-    int swapIndex = rand() % i;
-    std::swap(ary[swapIndex], ary[i]);
-  }
-}
+#include "knuth_shuffle.h"
 
 int main()
 {
