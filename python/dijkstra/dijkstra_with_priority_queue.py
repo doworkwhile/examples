@@ -32,9 +32,6 @@ def dijkstra(graph, start, end):
         pq.add(n, costs[n])
         visited[n] = True
 
-    if end in costs:
-      break
-
   if not end in costs:
     return "None"
 
