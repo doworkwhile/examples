@@ -327,7 +327,7 @@ print
 rbt.to_print(rbt.head, 0)
 
 print
-rbt.delete(20)
+rbt.delete(10)
 rbt.to_print(rbt.head, 0)
 
 print
