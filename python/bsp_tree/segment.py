@@ -1,10 +1,12 @@
+from tk_colors import TKColors
+
 class Segment:
   def __init__(self, begin, end):
     self.begin = begin
     self.end = end
-    self.color = None
-    self.line = None
-    self.midline = None
+
+    # used as a name, but also for drawing
+    self.color = TKColors.next()
 
   def x1(self):
     return self.begin[0]
