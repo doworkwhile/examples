@@ -120,3 +120,20 @@ class AhoCorasickDictionaries:
       if state in self.outputs and self.outputs[state]:
         ret.append((index, self.outputs[state]))
     return ret
+
+  def display(self):
+    print('=== Transitions ===')
+    for t in self.transitions:
+      print t, '=', self.transitions[t]
+
+    print('=== Alphabet ===')
+    for a in self.alphabet:
+      print a, '=', self.alphabet[a]
+
+    print('=== Fallbacks ===')
+    for f in self.fallbacks:
+      print f, '=', self.fallbacks[f]
+
+    print('=== Outputs ===')
+    for o in self.outputs:
+      print o, '=', self.outputs[o]
