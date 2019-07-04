@@ -85,19 +85,19 @@ class BinaryTree():
     else:
       minParent.left = minAtRight.right
 
-  def print_tree(self):
-    self.print_recursive(self.head, 0)
+  def printTree(self):
+    self.printRecursive(self.head, 0)
 
-  def print_recursive(self, node, depth):
+  def printRecursive(self, node, depth):
     if not node:
       return
-    self.print_recursive(node.right, depth + 1)
+    self.printRecursive(node.right, depth + 1)
     for i in xrange(depth):
       print '-----|',
     print node.v
-    self.print_recursive(node.left, depth + 1)
+    self.printRecursive(node.left, depth + 1)
 
-  def make_linked_list(self):
+  def makeLinkedList(self):
     grandparent = None
     parent = self.head
     leftChild = None
@@ -119,8 +119,8 @@ class BinaryTree():
         grandparent = parent
         parent = parent.right
 
-  def make_balanced(self):
-    self.make_linked_list
+  def makeBalanced(self):
+    self.makeLinkedList
 
     leafCount = 0
     current = self.head
@@ -135,13 +135,13 @@ class BinaryTree():
       msbShifts += 1
     levelRotations = (1 << msbShifts) - 1
     firstRotations = leafCount - levelRotations
-    self.do_balance_rotations(firstRotations)
+    self.doBalanceRotations(firstRotations)
 
     while levelRotations > 1:
       levelRotations /= 2
-      self.do_balance_rotations(levelRotations)
+      self.doBalanceRotations(levelRotations)
 
-  def do_balance_rotations(self, rotations):
+  def doBalanceRotations(self, rotations):
     grandparent = None
     parent = self.head
     rightChild = parent.right
@@ -163,19 +163,76 @@ class BinaryTree():
 
       rotations -= 1
 
+  def isSymmetricWalk(self):
+    if not self.head:
+      return True
+
+    return self.isSymmetricWalkRecurse(self.head.left, self.head.right)
+
+
+  def isSymmetricWalkRecurse(self, left, right):
+    if not left and not right:
+      return True
+    if not left or not right:
+      return False
+
+    return self.isSymmetricWalkRecurse(left.left, right.right) and self.isSymmetricWalkRecurse(left.right, right.left)
+
+  def clear(self):
+    self.head = None
+
+  def isSymmetricCount(self):
+    kq = self.isSymmetricCountRecurse(self.head, [0, 0])
+    return kq[0] is kq[1]
+
+  def isSymmetricCountRecurse(self, start, collect):
+    if not start:
+      return collect
+
+    if start.left:
+      collect[0] += 1
+
+    if start.right:
+      collect[1] += 1
+
+    self.isSymmetricCountRecurse(start.left, collect)
+    self.isSymmetricCountRecurse(start.right, collect)
+
+    return collect
+
+  def reverse(self):
+    self.reverseRecurse(self.head)
+
+  def reverseRecurse(self, start):
+    if not start:
+      return
+
+    temp = start.left
+    start.left = start.right
+    start.right = temp
+
+    self.reverseRecurse(start.left)
+    self.reverseRecurse(start.right)
 
 
 
+
+def ap(t, v):
+  t.create(Leaf(v))
+  t.printTree()
+  print 'count symmetric?', bt.isSymmetricCount()
+  print 'walk symmetric?', bt.isSymmetricWalk()
+  print
 
 bt = BinaryTree()
-bt.create(Leaf(5))
-bt.create(Leaf(8))
-bt.create(Leaf(7))
-bt.create(Leaf(9))
-bt.print_tree()
-bt.delete(8)
-bt.print_tree()
-bt.make_linked_list()
-bt.print_tree()
-bt.make_balanced()
-bt.print_tree()
+
+ap(bt, 10)
+ap(bt, 5)
+ap(bt, 7)
+ap(bt, 2)
+ap(bt, 15)
+ap(bt, 12)
+ap(bt, 18)
+
+bt.reverse()
+bt.printTree()
