@@ -132,10 +132,10 @@ class Heap
         last_item = self.contents.pop
         self.contents[remove_index] = last_item
 
-        if has_left(last_item) && is_parent_missing_or_ordered(last_item)
-          heap_down(last_item)
+        if has_left(remove_index) && is_parent_missing_or_ordered(remove_index)
+          heap_down(remove_index)
         else
-          heap_up(last_item)
+          heap_up(remove_index)
         end
       end
     end
@@ -156,7 +156,7 @@ class Heap
     to_swap = nil
 
     while has_left(current)
-      if has_right(current) && is_ordered(right(current), left(current))
+      if has_right(current) && are_children_ordered(current)
         to_swap = get_right_index(current)
       else
         to_swap = get_left_index(current)

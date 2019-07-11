@@ -30,3 +30,11 @@ test_elements.size.times {
 }
 puts "max_ordered? #{max_ordered.reverse == max_ordered.sort}"
 puts "polled all elements? #{max_heap.empty?}"
+
+# test remove
+test_elements.each { |e|
+  min_heap.add(e)
+}
+min_heap.remove(8);
+puts min_heap.contents.to_s
+puts "element removed? #{!min_heap.contents.include?(8)}"
