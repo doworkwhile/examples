@@ -19,6 +19,7 @@ test_elements.size.times {
   min_ordered << min_heap.poll
 }
 puts "min_ordered? #{min_ordered == min_ordered.sort}"
+puts min_ordered.to_s
 puts "polled all elements? #{min_heap.empty?}"
 
 # test max heap
@@ -29,9 +30,11 @@ test_elements.size.times {
   max_ordered << max_heap.poll
 }
 puts "max_ordered? #{max_ordered.reverse == max_ordered.sort}"
+puts max_ordered.to_s
 puts "polled all elements? #{max_heap.empty?}"
 
 # test remove
+puts "=== test remove"
 test_elements.each { |e|
   min_heap.add(e)
 }
