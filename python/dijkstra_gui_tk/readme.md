@@ -1,3 +1,5 @@
 ### Python 2.7
 ### Required Libraries
-`python-tk`, `python-imaging`, `python-imaging-tk`
+Tested on Linux Mint 19.3
+`apt install python-tk python-pil python-pil.imagetk python-pip`
+`pip install enum34`
